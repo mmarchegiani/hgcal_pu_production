@@ -8,7 +8,7 @@ import common
 import FWCore.ParameterSet.Config as cms
 
 
-def digi(input_rootfiles, pu_rootfiles=None, n_events=1):
+def digi(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None):
     digi_driver = common.CMSDriver('digi', '--no_exec')
     digi_driver.kwargs.update({
         '-s'              : 'DIGI:pdigi_valid,L1TrackTrigger,L1,DIGI2RAW,HLT:@fake2',
@@ -32,7 +32,8 @@ def digi(input_rootfiles, pu_rootfiles=None, n_events=1):
     process.mix.input.fileNames = cms.untracked.vstring(pu_rootfiles)
     process.mix.input.nbPileupEvents.averageNumber = cms.double(4.)
 
-    output_file = 'file:{}_digi_D86_fine_n{}_{}.root'.format(common.guntype(input_rootfiles[0]), n_events, strftime('%b%d'))
+    if output_file is None:
+        output_file = 'file:{}_digi_D86_fine_n{}_{}.root'.format(common.guntype(input_rootfiles[0]), n_events, strftime('%b%d'))
     common.logger.info('Output: %s', output_file)
     process.FEVTDEBUGHLToutput.fileName = cms.untracked.string(output_file)
 
@@ -48,6 +49,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 options = VarParsing('analysis')
 options.register('pu', '', VarParsing.multiplicity.list, VarParsing.varType.string, 'List of PU rootfiles')
 options.register('n', 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Number of events')
+options.register('outputfile', None, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Path to output file')
 options.parseArguments()
-process = digi(options.inputFiles, options.pu, n_events=options.n)
+process = digi(options.inputFiles, options.pu, n_events=options.n, output_file=options.outputfile)
 common.logger.info('Created process %s', process)

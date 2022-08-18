@@ -244,6 +244,12 @@ def add_generator(process, thing):
         raise Exception('Unknown thing %s' % thing)
 
 
+def add_profiling(process):
+    logger.info('Adding memory profiling')
+    from Validation.Performance.TimeMemoryInfo import customise 
+    process = customise(process)
+
+
 def guntype(filename):
     basename = osp.basename(filename)
     for keyword in ['muon', 'tau', 'minbias']:

@@ -7,7 +7,7 @@ import common
 import FWCore.ParameterSet.Config as cms
 
 
-def reco(input_rootfiles, pu_rootfiles=None, n_events=1):
+def reco(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None):
     reco_driver = common.CMSDriver('reco', '--no_exec')
     reco_driver.kwargs.update({
         '-s'             : 'RAW2DIGI,L1Reco,RECO,RECOSIM,PAT,VALIDATION:@phase2Validation+@miniAODValidation,DQM:@phase2+@miniAODDQM',
@@ -31,7 +31,8 @@ def reco(input_rootfiles, pu_rootfiles=None, n_events=1):
     process.mix.input.fileNames = cms.untracked.vstring(pu_rootfiles)
     process.mix.input.nbPileupEvents.averageNumber = cms.double(4.)
 
-    output_file = 'file:{}_reco_D86_fine_n{}_{}.root'.format(common.guntype(input_rootfiles[0]), n_events, strftime('%b%d'))
+    if output_file is None:
+        output_file = 'file:{}_reco_D86_fine_n{}_{}.root'.format(common.guntype(input_rootfiles[0]), n_events, strftime('%b%d'))
     common.logger.info('Output: %s', output_file)
     process.FEVTDEBUGHLToutput.fileName = cms.untracked.string(output_file)
 
@@ -95,6 +96,9 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 options = VarParsing('analysis')
 options.register('pu', '', VarParsing.multiplicity.list, VarParsing.varType.string, 'List of PU rootfiles')
 options.register('n', 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Number of events')
+options.register('outputfile', None, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Path to output file')
+options.register('profiling', None, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'Activate profiling')
 options.parseArguments()
-process = reco(options.inputFiles, options.pu, n_events=options.n)
+process = reco(options.inputFiles, options.pu, n_events=options.n, output_file=options.outputfile)
+if options.profiling: common.add_profiling(process)
 common.logger.info('Created process %s', process)

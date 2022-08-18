@@ -145,24 +145,24 @@ void AllSimTracksAndVerticesProducer::produce(edm::Event& iEvent, const edm::Eve
 
     std::unique_ptr<MixCollection<SimVertex>> simvertex_collection(new MixCollection<SimVertex>(cf_simvertex.product()));
     MixCollection<SimVertex>::iterator it_simvertex;
-    std::cout
-        << "simvertex_collection->sizeSignal()=" << simvertex_collection->sizeSignal()
-        << " simvertex_collection->sizePileup()=" << simvertex_collection->sizePileup()
-        << " simvertex_collection->size()=" << simvertex_collection->size()
-        << std::endl;
+    // std::cout
+    //     << "simvertex_collection->sizeSignal()=" << simvertex_collection->sizeSignal()
+    //     << " simvertex_collection->sizePileup()=" << simvertex_collection->sizePileup()
+    //     << " simvertex_collection->size()=" << simvertex_collection->size()
+    //     << std::endl;
     for (it_simvertex = simvertex_collection->begin(); it_simvertex != simvertex_collection->end(); it_simvertex++) {
-        std::cout
-            << "SimVertex " << it_simvertex->vertexId()
-            << " parentTrackID=" << it_simvertex->parentIndex()
-            << " event=" << it_simvertex->eventId().event()
-            << " bunch-X=" << it_simvertex->eventId().bunchCrossing()
-            << std::endl;
+        // std::cout
+        //     << "SimVertex " << it_simvertex->vertexId()
+        //     << " parentTrackID=" << it_simvertex->parentIndex()
+        //     << " event=" << it_simvertex->eventId().event()
+        //     << " bunch-X=" << it_simvertex->eventId().bunchCrossing()
+        //     << std::endl;
         SimVertex copy(*it_simvertex);
         vertex_mapper.add_vertex(copy);
         all_simvertices->push_back(copy);
         }
 
-    vertex_mapper.print();
+    // vertex_mapper.print();
 
     // for(auto& track : *(handleSimTracks.product())){
     //     SimTrack copy = track;
@@ -176,18 +176,18 @@ void AllSimTracksAndVerticesProducer::produce(edm::Event& iEvent, const edm::Eve
 
     std::unique_ptr<MixCollection<SimTrack>> simtrack_collection(new MixCollection<SimTrack>(cf_simtrack.product()));
     MixCollection<SimTrack>::iterator it_simtrack;
-    std::cout
-        << "simtrack_collection->sizeSignal()=" << simtrack_collection->sizeSignal()
-        << " simtrack_collection->sizePileup()=" << simtrack_collection->sizePileup()
-        << " simtrack_collection->size()=" << simtrack_collection->size()
-        << std::endl;
+    // std::cout
+    //     << "simtrack_collection->sizeSignal()=" << simtrack_collection->sizeSignal()
+    //     << " simtrack_collection->sizePileup()=" << simtrack_collection->sizePileup()
+    //     << " simtrack_collection->size()=" << simtrack_collection->size()
+    //     << std::endl;
     for (it_simtrack = simtrack_collection->begin(); it_simtrack != simtrack_collection->end(); it_simtrack++) {
-        std::cout
-            << "SimTrack " << it_simtrack->trackId()
-            << " vertIndex=" << it_simtrack->vertIndex()
-            << " event=" << it_simtrack->eventId().event()
-            << " bunch-X=" << it_simtrack->eventId().bunchCrossing()
-            << std::endl;
+        // std::cout
+        //     << "SimTrack " << it_simtrack->trackId()
+        //     << " vertIndex=" << it_simtrack->vertIndex()
+        //     << " event=" << it_simtrack->eventId().event()
+        //     << " bunch-X=" << it_simtrack->eventId().bunchCrossing()
+        //     << std::endl;
         SimTrack copy(*it_simtrack);
         copy.setVertexIndex(vertex_mapper.global_vertex_index(copy));
         all_simtracks->push_back(copy);
