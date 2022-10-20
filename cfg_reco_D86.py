@@ -7,7 +7,7 @@ import common
 import FWCore.ParameterSet.Config as cms
 
 
-def reco(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None):
+def reco(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None, n_pu=3):
     reco_driver = common.CMSDriver('reco', '--no_exec')
     reco_driver.kwargs.update({
         '-s'             : 'RAW2DIGI,L1Reco,RECO,RECOSIM,PAT,VALIDATION:@phase2Validation+@miniAODValidation,DQM:@phase2+@miniAODDQM',
@@ -29,7 +29,8 @@ def reco(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None):
     process.maxEvents.input = cms.untracked.int32(n_events)
     process.source.firstLuminosityBlock = cms.untracked.uint32(1)
     process.mix.input.fileNames = cms.untracked.vstring(pu_rootfiles)
-    process.mix.input.nbPileupEvents.averageNumber = cms.double(4.)
+    process.mix.input.nbPileupEvents.averageNumber = cms.double(float(n_pu))
+    common.logger.info(f'Will mix in {float(n_pu)} PU events')
 
     if output_file is None:
         output_file = 'file:{}_reco_D86_fine_n{}_{}.root'.format(common.guntype(input_rootfiles[0]), n_events, strftime('%b%d'))
@@ -98,7 +99,8 @@ options.register('pu', '', VarParsing.multiplicity.list, VarParsing.varType.stri
 options.register('n', 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Number of events')
 options.register('outputfile', None, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Path to output file')
 options.register('profiling', None, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'Activate profiling')
+options.register('npuevents', 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Number of PU events to mix in')
 options.parseArguments()
-process = reco(options.inputFiles, options.pu, n_events=options.n, output_file=options.outputfile)
+process = reco(options.inputFiles, options.pu, n_events=options.n, output_file=options.outputfile, n_pu=options.npuevents)
 if options.profiling: common.add_profiling(process)
 common.logger.info('Created process %s', process)

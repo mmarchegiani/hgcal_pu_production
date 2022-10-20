@@ -18,6 +18,7 @@ options = VarParsing('python')
 options.register("nThreads", 1, cms_single, cms_int, "number of threads")
 options.register("runPFTruth", 0, cms_single, cms_int, "Don't run PFTruth (currently not working with pileup)")
 options.register("merge", True, cms_single, cms_bool, "Run the SimCluster merging steps")
+options.register('outputfile', None, VarParsing.multiplicity.singleton, VarParsing.varType.string, 'Path to output file')
 options.parseArguments()
 
 # import of standard configurations
@@ -33,6 +34,13 @@ process.load('DPGAnalysis.HGCalNanoAOD.nanoHGCML_cff')
 process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+
+
+# Not needed and crashes stuff with PU
+process.nanoHGCMLSequence.remove(process.caloParticleTables)
+process.nanoHGCMLSequence.remove(process.layerClusterTables)
+process.nanoHGCMLRecoSequence.remove(process.pfTICLCandTable)
+
 
 # This isn't working with pileup
 if not options.runPFTruth:
@@ -87,8 +95,11 @@ process.configurationMetadata = cms.untracked.PSet(
 )
 
 # Output definition
-output_file = f'file:{common.guntype(options.inputFiles[0])}_nanoml_D86_fine_n{2}_{strftime("%b%d")}.root'
-if not options.merge: output_file = output_file.replace('.root', '_notmerged.root')
+if options.outputfile:
+    output_file = options.outputfile
+else:
+    output_file = f'file:{common.guntype(options.inputFiles[0])}_nanoml_D86_fine_n{2}_{strftime("%b%d")}.root'
+    if not options.merge: output_file = output_file.replace('.root', '_notmerged.root')
 common.logger.info('Output: %s', output_file)
 
 process.NANOAODSIMoutput = cms.OutputModule("NanoAODOutputModule",
@@ -132,6 +143,10 @@ if options.merge:
     process = customizeReco(process)
 else:
     common.logger.info('Not running merging')
+
+# Use the complete SimTrack and SimVertex collections, including PU
+process.hgcSimTruth.simVertices = cms.InputTag("AllSimTracksAndVerticesProducer", "AllSimVertices")
+process.hgcSimTruth.simTracks = cms.InputTag("AllSimTracksAndVerticesProducer", "AllSimTracks")
 
 # End of customisation functions
 

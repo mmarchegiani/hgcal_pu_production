@@ -257,3 +257,18 @@ def guntype(filename):
             return keyword
     else:
         raise Exception('Could not find a keyword')
+
+
+def debugging_session(banner="Debugger started (CTRL-D to quit)"):
+    import code, sys
+    # use exception trick to pick up the current frame
+    try:
+        raise None
+    except:
+        frame = sys.exc_info()[2].tb_frame.f_back
+    # evaluate commands in current namespace
+    namespace = frame.f_globals.copy()
+    namespace.update(frame.f_locals)
+    logger.warning("START DEBUG")
+    code.interact(banner=banner, local=namespace)
+    logger.warning("END DEBUG")
