@@ -39,7 +39,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 # Not needed and crashes stuff with PU
 process.nanoHGCMLSequence.remove(process.caloParticleTables)
 process.nanoHGCMLSequence.remove(process.layerClusterTables)
-process.nanoHGCMLRecoSequence.remove(process.pfTICLCandTable)
+#process.nanoHGCMLRecoSequence.remove(process.pfTICLCandTable)
 
 
 # This isn't working with pileup
@@ -60,10 +60,10 @@ process.source = cms.Source("PoolSource",
 )
 
 process.options = cms.untracked.PSet(
-    FailPath = cms.untracked.vstring(),
+    #FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
-    SkipEvent = cms.untracked.vstring(),
+    #SkipEvent = cms.untracked.vstring(),
     # SkipEvent = cms.untracked.vstring('ProductNotFound'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
