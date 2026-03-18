@@ -1,16 +1,16 @@
 ## Setup Aug 9 2022
 
 ```
-cmsrel CMSSW_12_1_1
-cd CMSSW_12_1_1/src
+version=CMSSW_15_1_0
+cmsrel $version
+cd $version/src
 cmsenv
 git cms-init
-git remote add thomas-cmssw git@github.com:tklijnsma/cmssw.git
-git fetch thomas-cmssw jansmerging:jansmerging
-git cms-merge-topic tklijnsma:jansmerging
+git cms-merge-topic dgaytanv:pepr_${version}
+scram b -j 12
 
-git clone git@github.com:tklijnsma/hgcal_pu_production.git
-scram b -j 10
+git clone git@github.com:mmarchegiani/hgcal_pu_production.git
+scram b -j 12
 ```
 
 ## How to run
