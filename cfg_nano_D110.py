@@ -31,6 +31,11 @@ process.load('Configuration.Geometry.GeometryExtendedRun4D110Reco_cff')
 process.load('Configuration.Geometry.GeometryExtendedRun4D110_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('DPGAnalysis.HGCalNanoAOD.nanoHGCML_cff')
+
+# specify where to look for simSiPixelDigis objects
+process.tpClusterProducer.pixelSimLinkSrc = cms.InputTag("simSiPixelDigis", "Pixel", "HLT")
+process.tpClusterProducer.phase2OTSimLinkSrc = cms.InputTag("simSiPixelDigis", "Tracker", "HLT")
+
 process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -155,7 +160,7 @@ process.genParticleTable.externalVariables = cms.PSet()
 # Fix for ProductNotFound error: Remove tpClusterProducer
 # tpClusterProducer needs simSiPixelDigis which aren't kept in the RECO output
 # This is a tracker-specific association not needed for HGCal studies
-process.trackingParticleTables.remove(process.tpClusterProducer)
+#process.trackingParticleTables.remove(process.tpClusterProducer)
 
 # End of customisation functions
 
