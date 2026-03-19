@@ -148,6 +148,10 @@ else:
 process.hgcSimTruth.simVertices = cms.InputTag("AllSimTracksAndVerticesProducer", "AllSimVertices")
 process.hgcSimTruth.simTracks = cms.InputTag("AllSimTracksAndVerticesProducer", "AllSimTracks")
 
+# Fix for ProductNotFound error: Remove genIso external variable
+# genIso is not produced in the custom RECO workflow, so we clear externalVariables
+process.genParticleTable.externalVariables = cms.PSet()
+
 # End of customisation functions
 
 
