@@ -56,7 +56,7 @@ echo ""
 
 # GENSIM -> DIGI -> RECO with on average 3 pileup events per event
 echo "▶ Running DIGI step..."
-cmsRun cfg_digi_D110.py inputFiles="file:$OUTPUT_DIR/muon_gensim.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=3 outputfile="$OUTPUT_DIR/muon_digi.root"
+cmsRun cfg_digi_D110.py inputFiles="file:$OUTPUT_DIR/muon_gensim.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=30 outputfile="$OUTPUT_DIR/muon_digi.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed DIGI step"
     exit 1
@@ -65,7 +65,7 @@ validate_file "$OUTPUT_DIR/muon_digi.root" "DIGI"
 echo ""
 
 echo "▶ Running RECO step..."
-cmsRun cfg_reco_D110.py inputFiles="file:$OUTPUT_DIR/muon_digi.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=3 outputfile="$OUTPUT_DIR/muon_reco.root"
+cmsRun cfg_reco_D110.py inputFiles="file:$OUTPUT_DIR/muon_digi.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=30 outputfile="$OUTPUT_DIR/muon_reco.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed RECO step"
     exit 1
