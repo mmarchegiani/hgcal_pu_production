@@ -36,7 +36,7 @@ validate_file() {
 
 # Create a minbias GENSIM event with finecalo
 echo "▶ Running GENSIM step (minbias pileup)..."
-cmsRun cfg_gensim_D110.py thing=minbias n=1 seed=123 outputfile="$OUTPUT_DIR/pileup_gensim.root"
+cmsRun cfg_gensim_D110.py thing=minbias n=100 seed=123 outputfile="$OUTPUT_DIR/pileup_gensim.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed GENSIM step (minbias)"
     exit 1
