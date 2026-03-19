@@ -11,7 +11,7 @@ def reco(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None, n_pu=
     reco_driver = common.CMSDriver('reco', '--no_exec')
     reco_driver.kwargs.update({
         '-s'             : 'RAW2DIGI,L1Reco,RECO,RECOSIM,PAT,VALIDATION:@phase2Validation+@miniAODValidation,DQM:@phase2+@miniAODDQM',
-        '--conditions'   : 'auto:phase2_realistic_T21',
+        '--conditions'   : 'auto:phase2_realistic_T33',
         '--datatier'     : 'GEN-SIM-RECO,MINIAODSIM,DQMIO',
         '-n'             : '10',
         '--eventcontent' : 'FEVTDEBUGHLT,MINIAODSIM,DQM',

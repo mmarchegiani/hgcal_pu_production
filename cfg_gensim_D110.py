@@ -11,7 +11,7 @@ def gensim(thing, n_events, seed=1, output_file=None):
     gensim_driver = common.CMSDriver('TTbar_14TeV_TuneCP5_cfi', '--no_exec')
     gensim_driver.kwargs.update({
         '-s'             : 'GEN,SIM',
-        '--conditions'   : 'auto:phase2_realistic_T21',
+        '--conditions'   : 'auto:phase2_realistic_T33',
         '--beamspot'     : 'HLLHC14TeV',
         '--datatier'     : 'GEN-SIM',
         '--eventcontent' : 'FEVTDEBUG',

@@ -12,7 +12,7 @@ def digi(input_rootfiles, pu_rootfiles=None, n_events=1, output_file=None, n_pu=
     digi_driver = common.CMSDriver('digi', '--no_exec')
     digi_driver.kwargs.update({
         '-s'              : 'DIGI:pdigi_valid,L1TrackTrigger,L1,DIGI2RAW,HLT:@fake2',
-        '--conditions'    : 'auto:phase2_realistic_T21',
+        '--conditions'    : 'auto:phase2_realistic_T33',
         '--datatier'      : 'GEN-SIM-DIGI-RAW',
         '--eventcontent'  : 'FEVTDEBUGHLT',
         '--geometry'      : 'ExtendedRun4D110',
