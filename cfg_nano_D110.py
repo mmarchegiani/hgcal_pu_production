@@ -152,6 +152,11 @@ process.hgcSimTruth.simTracks = cms.InputTag("AllSimTracksAndVerticesProducer", 
 # genIso is not produced in the custom RECO workflow, so we clear externalVariables
 process.genParticleTable.externalVariables = cms.PSet()
 
+# Fix for ProductNotFound error: Remove tpClusterProducer
+# tpClusterProducer needs simSiPixelDigis which aren't kept in the RECO output
+# This is a tracker-specific association not needed for HGCal studies
+process.trackingParticleTables.remove(process.tpClusterProducer)
+
 # End of customisation functions
 
 
