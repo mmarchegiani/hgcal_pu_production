@@ -15,20 +15,73 @@ mkdir -p "$OUTPUT_DIR"
 # Convert to absolute path to avoid issues with relative paths
 OUTPUT_DIR=$(realpath "$OUTPUT_DIR")
 
+# Get script directory for validation script
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 echo "Saving all output files to: $OUTPUT_DIR"
+echo ""
+
+# Function to validate output files
+validate_file() {
+    local file=$1
+    local step_name=$2
+    
+    python3 "$SCRIPT_DIR/validate_root_file.py" "$file"
+    if [ $? -ne 0 ]; then
+        echo ""
+        echo "❌ Failed $step_name step - output file is invalid or empty"
+        exit 1
+    fi
+}
 
 # Create a minbias GENSIM event with finecalo
+echo "▶ Running GENSIM step (minbias pileup)..."
 cmsRun cfg_gensim_D110.py thing=minbias n=1 seed=123 outputfile="$OUTPUT_DIR/pileup_gensim.root"
+if [ $? -ne 0 ]; then
+    echo "❌ Failed GENSIM step (minbias)"
+    exit 1
+fi
+validate_file "$OUTPUT_DIR/pileup_gensim.root" "GENSIM (minbias)"
+echo ""
 
 # Create a tau/muon GENSIM event with finecalo
+echo "▶ Running GENSIM step (muon signal)..."
 cmsRun cfg_gensim_D110.py thing=muon n=1 seed=123 outputfile="$OUTPUT_DIR/muon_gensim.root"
+if [ $? -ne 0 ]; then
+    echo "❌ Failed GENSIM step (muon)"
+    exit 1
+fi
+validate_file "$OUTPUT_DIR/muon_gensim.root" "GENSIM (muon)"
+echo ""
 
 # GENSIM -> DIGI -> RECO with on average 3 pileup events per event
+echo "▶ Running DIGI step..."
 cmsRun cfg_digi_D110.py inputFiles="file:$OUTPUT_DIR/muon_gensim.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=3 outputfile="$OUTPUT_DIR/muon_digi.root"
+if [ $? -ne 0 ]; then
+    echo "❌ Failed DIGI step"
+    exit 1
+fi
+validate_file "$OUTPUT_DIR/muon_digi.root" "DIGI"
+echo ""
 
+echo "▶ Running RECO step..."
 cmsRun cfg_reco_D110.py inputFiles="file:$OUTPUT_DIR/muon_digi.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=3 outputfile="$OUTPUT_DIR/muon_reco.root"
+if [ $? -ne 0 ]; then
+    echo "❌ Failed RECO step"
+    exit 1
+fi
+validate_file "$OUTPUT_DIR/muon_reco.root" "RECO"
+echo ""
 
 # RECO -> NANOAOD Ntuple; includes the truth merging
+echo "▶ Running NANO step..."
 cmsRun cfg_nano_D110.py inputFiles="file:$OUTPUT_DIR/muon_reco.root" merge=True outputfile="file:$OUTPUT_DIR/muon_nano.root"
+if [ $? -ne 0 ]; then
+    echo "❌ Failed NANO step"
+    exit 1
+fi
+validate_file "$OUTPUT_DIR/muon_nano.root" "NANO"
+echo ""
 
+echo "✓ All steps completed successfully!"
 echo "All files have been saved to: $OUTPUT_DIR"
