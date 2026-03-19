@@ -46,7 +46,7 @@ echo ""
 
 # Create a tau/muon GENSIM event with finecalo
 echo "▶ Running GENSIM step (muon signal)..."
-cmsRun cfg_gensim_D110.py thing=muon n=1 seed=123 outputfile="$OUTPUT_DIR/muon_gensim.root"
+cmsRun cfg_gensim_D110.py thing=muon n=10 seed=123 outputfile="$OUTPUT_DIR/muon_gensim.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed GENSIM step (muon)"
     exit 1
