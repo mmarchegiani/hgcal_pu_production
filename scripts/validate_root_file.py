@@ -43,13 +43,13 @@ def validate_root_file(filepath):
             tfile.Close()
             return False
         
-        print(f"✓ Valid ROOT file with {n_events} events: {os.path.basename(filepath)}")
+        print(f"✅ Valid ROOT file with {n_events} events: {os.path.basename(filepath)}")
         tfile.Close()
         return True
         
     except ImportError:
         print("WARNING: ROOT Python bindings not available, skipping detailed validation", file=sys.stderr)
-        print(f"✓ File exists and has reasonable size: {os.path.basename(filepath)}")
+        print(f"✅ File exists and has reasonable size: {os.path.basename(filepath)}")
         return True
     except Exception as e:
         print(f"ERROR: Exception while validating {filepath}: {e}", file=sys.stderr)
