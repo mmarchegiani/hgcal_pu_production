@@ -35,7 +35,7 @@ validate_file() {
 }
 
 # RECO -> NANOAOD Ntuple; includes the truth merging
-echo "▶ Running NANO step..."
+echo "⏳ Running NANO step..."
 cmsRun cfg_nano_D110.py inputFiles="file:$OUTPUT_DIR/muon_reco.root" merge=True outputfile="file:$OUTPUT_DIR/muon_nano.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed NANO step"
@@ -44,5 +44,5 @@ fi
 validate_file "$OUTPUT_DIR/muon_nano.root" "NANO"
 echo ""
 
-echo "✓ All steps completed successfully!"
+echo "✅ All steps completed successfully!"
 echo "All files have been saved to: $OUTPUT_DIR"
