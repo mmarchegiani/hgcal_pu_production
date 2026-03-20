@@ -37,3 +37,10 @@ cmsRun cfg_reco_D110.py inputFiles=file:muon_digi.root pu=file:pileup_gensim.roo
 
 cmsRun cfg_nano_D110.py inputFiles=muon_reco.root merge=True outputfile=file:muon_nano.root
 ```
+
+### Run test with wrapper script
+A wrapper script is provided to run the GEN, DIGI, RECO and NANO steps in one shot:
+
+```bash
+bash scripts/run_test.sh test_10events_30PU
+```
