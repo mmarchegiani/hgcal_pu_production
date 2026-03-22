@@ -8,6 +8,7 @@ if [ $# -eq 0 ]; then
 fi
 
 OUTPUT_DIR="$1"
+N=1000
 PU=30
 
 # Create output directory if it doesn't exist
@@ -19,6 +20,7 @@ OUTPUT_DIR=$(realpath "$OUTPUT_DIR")
 # Get script directory for validation script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+echo "Simulating $N events with an average of $PU pileup interactions per event..."
 echo "Saving all output files to: $OUTPUT_DIR"
 echo ""
 
@@ -37,7 +39,7 @@ validate_file() {
 
 # Create a minbias GENSIM event with finecalo
 echo "⏳ Running GENSIM step (minbias pileup)..."
-cmsRun cfg_gensim_D110.py thing=minbias n=100 seed=123 outputfile="$OUTPUT_DIR/pileup_gensim.root"
+cmsRun cfg_gensim_D110.py thing=minbias n=$N seed=123 outputfile="$OUTPUT_DIR/pileup_gensim.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed GENSIM step (minbias)"
     exit 1
@@ -47,7 +49,7 @@ echo ""
 
 # Create a tau/muon GENSIM event with finecalo
 echo "⏳ Running GENSIM step (muon signal)..."
-cmsRun cfg_gensim_D110.py thing=muon n=10 seed=123 outputfile="$OUTPUT_DIR/muon_gensim.root"
+cmsRun cfg_gensim_D110.py thing=muon n=$N seed=123 outputfile="$OUTPUT_DIR/muon_gensim.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed GENSIM step (muon)"
     exit 1
@@ -57,7 +59,7 @@ echo ""
 
 # GENSIM -> DIGI -> RECO with on average 30 pileup events per event
 echo "⏳ Running DIGI step..."
-cmsRun cfg_digi_D110.py inputFiles="file:$OUTPUT_DIR/muon_gensim.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=$PU outputfile="$OUTPUT_DIR/muon_digi.root"
+cmsRun cfg_digi_D110.py inputFiles="file:$OUTPUT_DIR/muon_gensim.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=$N npuevents=$PU outputfile="$OUTPUT_DIR/muon_digi.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed DIGI step"
     exit 1
@@ -66,7 +68,7 @@ validate_file "$OUTPUT_DIR/muon_digi.root" "DIGI"
 echo ""
 
 echo "⏳ Running RECO step..."
-cmsRun cfg_reco_D110.py inputFiles="file:$OUTPUT_DIR/muon_digi.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=10 npuevents=$PU outputfile="$OUTPUT_DIR/muon_reco.root"
+cmsRun cfg_reco_D110.py inputFiles="file:$OUTPUT_DIR/muon_digi.root" pu="file:$OUTPUT_DIR/pileup_gensim.root" n=$N npuevents=$PU outputfile="$OUTPUT_DIR/muon_reco.root"
 if [ $? -ne 0 ]; then
     echo "❌ Failed RECO step"
     exit 1
