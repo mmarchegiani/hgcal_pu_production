@@ -7,6 +7,7 @@ import copy
 import importlib
 import os, os.path as osp
 from functools import cached_property
+import math
 
 import FWCore.ParameterSet.Config as cms
 
@@ -195,22 +196,29 @@ def activate_finecalo(process):
 
 
 def add_generator(process, thing):
-    if thing in {'muon', 'tau'}:
-        pdgid = dict(muon=13, tau=15)[thing]
-        process.generator = cms.EDProducer("FlatRandomEGunProducer",
+    if thing in {'electron', 'muon', 'tau'}:
+        pdgid = dict(electron=11, muon=13, tau=15)[thing]
+        min_eta = 1.479
+        max_eta = 3.0
+        energy = 35.0
+        process.generator = cms.EDProducer("FlatEtaRangeGunProducer",
             AddAntiParticle = cms.bool(True),
             PGunParameters = cms.PSet(
-                MaxEta = cms.double(3.0),
-                MaxPhi = cms.double(3.14159265359),
-                MaxE = cms.double(35.0),
-                MinEta = cms.double(1.479),
-                MinPhi = cms.double(-3.14159265359),
-                MinE = cms.double(35.0),
-                PartID = cms.vint32(pdgid)
+                MaxEta = cms.double(max_eta),
+                MaxPhi = cms.double(math.pi),
+                MaxE = cms.double(energy),
+                MinEta = cms.double(min_eta),
+                MinPhi = cms.double(-math.pi),
+                MinE = cms.double(energy),
+                PartID = cms.vint32(pdgid),
+                nParticles=cms.int32(1),
+                exactShoot=cms.bool(False),
+                randomShoot=cms.bool(False),
                 ),
             Verbosity = cms.untracked.int32(0),
+            debug=cms.untracked.bool(False),
             firstRun = cms.untracked.uint32(1),
-            psethack = cms.string('multiple particles predefined pT/E eta 1p479 to 3')
+            psethack = cms.string('multiple particles predefined pT/E with eta between {} and {}'.format(min_eta, max_eta)),
             )
     elif thing == 'minbias':
         process_parameters = cms.vstring(
@@ -252,7 +260,7 @@ def add_profiling(process):
 
 def guntype(filename):
     basename = osp.basename(filename)
-    for keyword in ['muon', 'tau', 'minbias']:
+    for keyword in ['electron', 'muon', 'tau', 'minbias']:
         if keyword in basename:
             return keyword
     else:
