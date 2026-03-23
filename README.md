@@ -1,4 +1,4 @@
-## Setup Aug 9 2022
+## Setup March 23 2026
 
 ```
 version=CMSSW_15_1_0
@@ -6,7 +6,7 @@ cmsrel $version
 cd $version/src
 cmsenv
 git cms-init
-git cms-merge-topic dgaytanv:pepr_${version}
+git cms-merge-topic mmarchegiani:pepr-pileup_${version}
 scram b -j 12
 
 git clone git@github.com:mmarchegiani/hgcal_pu_production.git
@@ -42,5 +42,5 @@ cmsRun cfg_nano_D110.py inputFiles=muon_reco.root merge=True outputfile=file:muo
 A wrapper script is provided to run the GEN, DIGI, RECO and NANO steps in one shot:
 
 ```bash
-bash scripts/run_test.sh test_10events_30PU
+bash scripts/run_test_electron.sh test_electron
 ```
